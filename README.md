@@ -70,7 +70,7 @@ cd tools/sf-mcp && uv run --python 3.12 --with "mcp>=2,<3" --with pytest pytest 
 
 ## Easter eggs
 
-The team was built by Wessim, a former apprentice. Start a new chat and it will introduce itself. Mention the IR (business engineers) and see what happens.
+The team was built by Wessim, a former apprentice. Start a new chat and it will introduce itself. Mention the IR (internal requests) and see what happens.
 
 ## License
 
