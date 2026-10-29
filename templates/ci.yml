@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install -g @salesforce/cli
+      - run: sf plugins install code-analyzer
+      # Fails on any severity 2 (High) or 1 (Critical) violation.
+      - run: sf code-analyzer run --workspace force-app --severity-threshold 2 --view table
+
+  validation:
+    name: Check-only deploy to the dev sandbox
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install -g @salesforce/cli
+      - name: Log in as the integration user
+        env:
+          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL_DEV }}
+        run: |
+          echo "$SFDX_AUTH_URL" > auth.txt
+          sf org login sfdx-url --sfdx-url-file auth.txt --alias dev-sandbox
+          rm auth.txt
+      # Not RunLocalTests: tests already broken in the org would fail every validation.
+      - run: sf project deploy validate --source-dir force-app --target-org dev-sandbox --test-level RunRelevantTests

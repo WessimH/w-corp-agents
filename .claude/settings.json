@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sf sobject describe:*)",
+      "Bash(sf data query:*)",
+      "Bash(sf project deploy validate:*)",
+      "mcp__sf-mcp__describe_object",
+      "mcp__sf-mcp__soql",
+      "mcp__sf-mcp__validate_deploy"
+    ],
+    "ask": [
+      "Bash(sf project retrieve start:*)",
+      "Bash(sf project:retrieve:start:*)",
+      "mcp__sf-mcp__retrieve",
+      "Bash(sf project deploy start:*)",
+      "Bash(sf project:deploy:start:*)",
+      "Bash(sf project deploy quick:*)",
+      "Bash(sf project deploy resume:*)",
+      "Bash(sf project delete source:*)",
+      "Bash(sf data create:*)",
+      "Bash(sf data update:*)",
+      "Bash(sf data upsert:*)",
+      "Bash(sf data delete:*)",
+      "Bash(sf data import:*)",
+      "Bash(sf apex run:*)",
+      "Bash(sf org create:*)",
+      "Bash(sf org delete:*)"
+    ],
+    "deny": [
+      "Bash(sf org login:*)",
+      "Bash(sf org:login:*)",
+      "Bash(sf org display:*)",
+      "Bash(sf org:display:*)",
+      "Bash(sf force:*)"
+    ]
+  },
+  "enabledMcpjsonServers": ["sf-mcp"]
+}
