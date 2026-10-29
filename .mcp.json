@@ -3,7 +3,7 @@
     "sf-mcp": {
       "command": "uv",
       "args": ["run", "--python", "3.12", "--with", "mcp>=2,<3", "tools/sf-mcp/server.py"],
-      "env": { "SF_TARGET_ORG": "my-dev-sandbox" }
+      "env": { "SF_TARGET_ORG": "${SF_TARGET_ORG:-my-dev-sandbox}" }
     }
   }
 }

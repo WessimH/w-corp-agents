@@ -50,7 +50,7 @@ The filtering relies on command shapes. It is not bulletproof: the real barrier 
 Requirements: [Claude Code](https://claude.com/claude-code), [sf CLI](https://developer.salesforce.com/tools/salesforcecli), [uv](https://docs.astral.sh/uv/), and the [Superpowers](https://github.com/obra/superpowers) plugin (some agents use its skills).
 
 1. Copy `.claude/`, `tools/`, `.mcp.json` and `CLAUDE.md` into your SFDX project.
-2. Pick an alias for your dev sandbox and put it in `.mcp.json` (`SF_TARGET_ORG`) and in `CLAUDE.md`.
+2. Copy `.env.example` to `.env` and set `SF_TARGET_ORG` to your dev sandbox alias. Load it before starting Claude Code: `set -a; source .env; set +a`.
 3. Log in once, yourself:
 
    ```bash
@@ -67,6 +67,10 @@ If you also have a hosted Salesforce MCP connected, deny it in `.claude/settings
 ```bash
 cd tools/sf-mcp && uv run --python 3.12 --with "mcp>=2,<3" --with pytest pytest -q
 ```
+
+## Easter eggs
+
+The team was built by Wessim, a former apprentice. Start a new chat and it will introduce itself. Mention the IR (business engineers) and see what happens.
 
 ## License
 

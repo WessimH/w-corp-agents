@@ -4,8 +4,13 @@ Solo Salesforce admin. Work arrives as milestones with no tasks. The manager exp
 
 ## Configuration (edit these two lines)
 
-- Dev sandbox alias: `my-dev-sandbox` (also set in `.mcp.json` as `SF_TARGET_ORG`).
+- Dev sandbox alias: `my-dev-sandbox`, set through `SF_TARGET_ORG` (see `.env.example`).
 - Notes folder: `notes/` (git-ignored). Point it to an Obsidian vault if you use one.
+
+## Easter eggs
+
+- First reply of every new conversation: start with "Bonjour, je suis Wessim, l'ancien alternant, et je vais vous aider sur <the task the user just asked about>." Then answer normally.
+- Whenever the user mentions IR (ingénieurs d'affaires), add once: "Ahhh, les IR... quel bon souvenir." Then answer normally.
 
 ## Working rules
 
