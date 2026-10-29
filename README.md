@@ -45,22 +45,91 @@ The filtering relies on command shapes. It is not bulletproof: the real barrier 
 
 `tools/sf-mcp/` is a small Python MCP server that wraps sf CLI. It exposes four tools: `describe_object`, `soql`, `retrieve` and `validate_deploy`. It keeps only what matters: describing `Account` returns name, label, type and required flag for each field instead of thousands of lines of JSON. No paid service, no extra login.
 
-## Setup
+## How to set up in your project
 
-Requirements: [Claude Code](https://claude.com/claude-code), [sf CLI](https://developer.salesforce.com/tools/salesforcecli), [uv](https://docs.astral.sh/uv/), and the [Superpowers](https://github.com/obra/superpowers) plugin (some agents use its skills).
+You need an existing SFDX project (a repo with `sfdx-project.json` and `force-app/`) and:
 
-1. Copy `.claude/`, `tools/`, `.mcp.json` and `CLAUDE.md` into your SFDX project.
-2. Copy `.env.example` to `.env` and set `SF_TARGET_ORG` to your dev sandbox alias. Load it before starting Claude Code: `set -a; source .env; set +a`.
-3. Log in once, yourself:
+- [Claude Code](https://claude.com/claude-code)
+- [sf CLI](https://developer.salesforce.com/tools/salesforcecli)
+- [uv](https://docs.astral.sh/uv/), which runs the MCP server with the right Python, nothing to install by hand
+- the [Superpowers](https://github.com/obra/superpowers) plugin, whose skills some agents use: run `/plugin install superpowers@claude-plugins-official` in Claude Code
 
-   ```bash
-   sf org login web -a my-dev-sandbox --instance-url https://test.salesforce.com
-   ```
+### 1. Copy the files into your project
 
-4. Start a new Claude Code session in the project (agents load at startup) and ask: "Which agents and sf-mcp tools do you see?"
-5. Optional: copy `templates/ci.yml` to `.github/workflows/` for static analysis and a check-only deploy on every pull request. It needs a `SFDX_AUTH_URL_DEV` secret from a dedicated integration user.
+Work on a branch, so you can try it and throw it away.
 
-If you also have a hosted Salesforce MCP connected, deny it in `.claude/settings.local.json` so agents cannot write through it.
+```bash
+cd path/to/your-sfdx-project
+git switch -c chore/claude-agents
+git clone --depth 1 https://github.com/WessimH/w-corp-agents.git /tmp/w-corp-agents
+cp -R /tmp/w-corp-agents/.claude /tmp/w-corp-agents/tools .
+cp /tmp/w-corp-agents/.mcp.json /tmp/w-corp-agents/.env.example .
+cp -n /tmp/w-corp-agents/CLAUDE.md .
+```
+
+Already have some of these files? Merge by hand instead of overwriting:
+
+- `CLAUDE.md`: `cp -n` above skips it. Paste the sections you want (at least *Salesforce*, *Frugality* and *Milestone flow*) into yours.
+- `.claude/settings.json`: merge the `allow`, `ask` and `deny` lists into yours. These lists are the guardrails, do not skip them.
+- `.mcp.json`: add the `sf-mcp` entry next to your other servers.
+
+Then add to your `.gitignore`:
+
+```
+.env
+notes/
+.claude/settings.local.json
+```
+
+### 2. Point it at your dev sandbox
+
+```bash
+cp .env.example .env
+```
+
+Set `SF_TARGET_ORG` in `.env` to the alias of the sandbox the agents may use, and write the same alias in the *Configuration* section of `CLAUDE.md`. Then log in to that sandbox yourself (agents are not allowed to):
+
+```bash
+sf org login web -a my-dev-sandbox --instance-url https://test.salesforce.com
+```
+
+Only log in to orgs you are fine with the agents reading. Never log in to production on this machine under that alias.
+
+### 3. Start Claude Code with the variable loaded
+
+Claude Code does not read `.env` by itself:
+
+```bash
+set -a; source .env; set +a; claude
+```
+
+On first start, Claude Code asks whether to enable the project MCP server `sf-mcp`: accept.
+
+### 4. Check that it works
+
+In that new session, ask:
+
+```
+Which agents and sf-mcp tools do you see? Then describe the Account object with sf-mcp.
+```
+
+Expected: 12 agents, 4 tools (`describe_object`, `soql`, `retrieve`, `validate_deploy`), and a short list of Account fields. If you get "Run: sf org login web -a ...", step 2 is not done.
+
+### 5. Use it on a real milestone
+
+Paste a milestone and name the note:
+
+```
+New milestone: <paste the text>. Run po-ba. Note: notes/Milestone - <name>.md
+```
+
+Then follow the *Milestone flow* in `CLAUDE.md`: answer po-ba's questions with your manager, call scrum-master, and let each task run with only the agents it names.
+
+### Optional
+
+- **CI**: copy `templates/ci.yml` to `.github/workflows/ci.yml` for static analysis and a check-only deploy on every pull request. It needs a GitHub secret `SFDX_AUTH_URL_DEV` from a dedicated integration user with minimal rights, never your own account.
+- **Hosted Salesforce MCP**: if one is connected in Claude, deny it in `.claude/settings.local.json` (`"deny": ["mcp__<its-id>"]`) so agents cannot write through it.
+- **Obsidian**: replace `notes/` with the path of your vault in `CLAUDE.md` to read the notes there.
 
 ## Tests
 
